@@ -27,8 +27,8 @@ body {
     min-height: 100vh;
 }
 
-/* Pre-Landing */
-#pre-landing {
+/* Stage 1: Intro */
+#stage-1 {
     position: fixed;
     top: 0;
     left: 0;
@@ -40,13 +40,14 @@ body {
     align-items: center;
     z-index: 1000;
     transition: all 1s cubic-bezier(0.4, 0, 0.2, 1);
-    backdrop-filter: blur(5px);
+    backdrop-filter: blur(15px); /* Increased blur for better separation */
 }
 
-#pre-landing.fade-out {
+#stage-1.fade-out {
     opacity: 0;
     visibility: hidden;
     transform: scale(1.05);
+    pointer-events: none;
 }
 
 .pre-landing-content {
@@ -61,7 +62,7 @@ body {
     line-height: 1.1;
     margin-bottom: 4rem;
     color: white;
-    text-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    text-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
 }
 
 #btn-start {
@@ -70,7 +71,7 @@ body {
     border-radius: 20px;
     background: linear-gradient(135deg, #6366f1, #a855f7);
     border: 1px solid rgba(255, 255, 255, 0.2);
-    box-shadow: 0 8px 32px rgba(99, 102, 241, 0.3);
+    box-shadow: 0 8px 32px rgba(99, 102, 241, 0.4);
     margin-bottom: 2rem;
 }
 
@@ -91,7 +92,7 @@ body {
     transition: width 10s linear;
 }
 
-#pre-landing.active .timer-bar {
+#stage-1.active .timer-bar {
     width: 100%;
 }
 
@@ -256,6 +257,7 @@ kbd {
     display: none !important;
     opacity: 0;
     transform: translateY(20px);
+    pointer-events: none;
 }
 
 .stage.active {

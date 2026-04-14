@@ -56,6 +56,8 @@ document.addEventListener('DOMContentLoaded', () => {
         stage1.classList.add('fade-out');
         setTimeout(() => {
             goToStage(2);
+            // Extra layer of protection: ensure Stage 1 is dead to the user
+            stage1.style.pointerEvents = 'none';
         }, 1000);
     }
 
