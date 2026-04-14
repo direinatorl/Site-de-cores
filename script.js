@@ -133,10 +133,25 @@
         }, 1000);
     }
 
-    btnStart.onclick = () => {
-        hideIntro();
-        landingPage.classList.remove('hidden');
-    };
+    function startAutoTimer() {
+        preLanding.classList.add('active'); // Starts CSS animation
+        const autoTimer = setTimeout(() => {
+            if (preLanding.style.display !== 'none') {
+                hideIntro();
+                landingPage.classList.remove('hidden');
+            }
+        }, 10000);
+
+        // Cancel timer if user clicks manually
+        btnStart.addEventListener('click', () => {
+            clearTimeout(autoTimer);
+            hideIntro();
+            landingPage.classList.remove('hidden');
+        });
+    }
+
+    // Initialize Auto Timer
+    startAutoTimer();
 
     btnExamples.onclick = showMainApp;
     btnHome.onclick = showLanding;
