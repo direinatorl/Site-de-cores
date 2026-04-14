@@ -4,8 +4,7 @@
     const mainApp = document.getElementById('main-app');
 
     // Intro Controls
-    const btnGoExamples = document.getElementById('btn-go-examples');
-    const btnGoUpload = document.getElementById('btn-go-upload');
+    const btnStart = document.getElementById('btn-start');
     const landingFileInput = document.getElementById('landing-file-input');
     const landingDropZone = document.getElementById('landing-drop-zone');
 
@@ -134,12 +133,7 @@
         }, 1000);
     }
 
-    btnGoExamples.onclick = () => {
-        hideIntro();
-        showMainApp();
-    };
-
-    btnGoUpload.onclick = () => {
+    btnStart.onclick = () => {
         hideIntro();
         landingPage.classList.remove('hidden');
     };
