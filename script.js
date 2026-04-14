@@ -1,9 +1,10 @@
-document.addEventListener('DOMContentLoaded', () => {
     // Screens
+    const preLanding = document.getElementById('pre-landing');
     const landingPage = document.getElementById('landing-page');
     const mainApp = document.getElementById('main-app');
 
     // Controls
+    const btnStart = document.getElementById('btn-start');
     const btnExamples = document.getElementById('btn-examples');
     const landingFileInput = document.getElementById('landing-file-input');
     const landingDropZone = document.getElementById('landing-drop-zone');
@@ -124,6 +125,13 @@ document.addEventListener('DOMContentLoaded', () => {
             e.preventDefault();
             createPalette();
         }
+    };
+
+    btnStart.onclick = () => {
+        preLanding.classList.add('fade-out');
+        setTimeout(() => {
+            preLanding.style.display = 'none';
+        }, 1000);
     };
 
     btnExamples.onclick = showMainApp;
