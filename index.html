@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spectra | Gerador de Paletas de Cores</title>
+    <meta name="description" content="Gere paletas de cores incríveis instantaneamente e extraia cores de suas imagens favoritas.">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header class="animate-in">
+            <div class="logo">Spectra.</div>
+            <div class="hint">Pressione <kbd>Espaço</kbd> para gerar novas cores</div>
+        </header>
+
+        <main>
+            <!-- Generator Section -->
+            <section class="palette-grid" id="palette-container">
+                <!-- Color cards will be generated here -->
+            </section>
+
+            <!-- Image Discovery Section -->
+            <section class="image-section animate-in">
+                <h2>Inspiração Visual</h2>
+                <p>Arraste uma imagem para extrair sua essência cromática</p>
+                
+                <div class="drop-area" id="drop-area">
+                    <p id="drop-text">Solte sua imagem aqui ou clique para fazer upload</p>
+                    <input type="file" id="file-input" hidden accept="image/*">
+                    <img id="image-preview" alt="Preview da imagem">
+                </div>
+
+                <div class="extracted-colors" id="extracted-colors">
+                    <!-- Extracted colors will appear here -->
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <p>&copy; 2026 Spectra. Feito para o GitHub com &hearts;</p>
+        </footer>
+    </div>
+
+    <!-- Canvas for color processing (hidden) -->
+    <canvas id="color-canvas" style="display:none;"></canvas>
+
+    <script src="script.js"></script>
+</body>
+</html>
