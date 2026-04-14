@@ -8,8 +8,25 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container">
-        <header class="animate-in">
+    <!-- Landing Screen -->
+    <section id="landing-page" class="animate-in">
+        <div class="logo">Spectra.</div>
+        <h1>Colora sua imaginação.</h1>
+        <p>Identifique cores de suas fotos favoritas ou descubra combinações aleatórias impressionantes pressionando uma tecla.</p>
+        
+        <div class="landing-controls">
+            <div class="landing-drop-zone" id="landing-drop-zone">
+                <p>Arraste uma imagem aqui para começar</p>
+                <input type="file" id="landing-file-input" hidden accept="image/*">
+            </div>
+            <button class="btn-primary" id="btn-upload-landing">Upload de Imagem</button>
+            <button class="btn-secondary" id="btn-examples">Exemplo de cores e seus códigos</button>
+        </div>
+    </section>
+
+    <!-- Main Application -->
+    <div id="main-app" class="container hidden">
+        <header>
             <div class="logo">Spectra.</div>
             <div class="hint">Pressione <kbd>Espaço</kbd> para gerar novas cores</div>
         </header>
@@ -21,14 +38,14 @@
             </section>
 
             <!-- Image Discovery Section -->
-            <section class="image-section animate-in">
+            <section class="image-section">
                 <h2>Inspiração Visual</h2>
-                <p>Arraste uma imagem para extrair sua essência cromática</p>
+                <p>Extraia a essência cromática desta ou de outra imagem</p>
                 
                 <div class="drop-area" id="drop-area">
-                    <p id="drop-text">Solte sua imagem aqui ou clique para fazer upload</p>
+                    <p id="drop-text">Clique para trocar a imagem</p>
                     <input type="file" id="file-input" hidden accept="image/*">
-                    <img id="image-preview" alt="Preview da imagem">
+                    <img id="image-preview" alt="Preview da imagem" src="inspiration.png" style="display: block;">
                 </div>
 
                 <div class="extracted-colors" id="extracted-colors">

@@ -1,4 +1,14 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // Screens
+    const landingPage = document.getElementById('landing-page');
+    const mainApp = document.getElementById('main-app');
+
+    // Controls
+    const btnExamples = document.getElementById('btn-examples');
+    const btnUploadLanding = document.getElementById('btn-upload-landing');
+    const landingFileInput = document.getElementById('landing-file-input');
+    const landingDropZone = document.getElementById('landing-drop-zone');
+
     const paletteContainer = document.getElementById('palette-container');
     const dropArea = document.getElementById('drop-area');
     const fileInput = document.getElementById('file-input');
@@ -8,6 +18,19 @@ document.addEventListener('DOMContentLoaded', () => {
     const ctx = canvas.getContext('2d');
 
     let currentPalette = [];
+    let isAppActive = false;
+
+    // --- Screen Transitions ---
+
+    function showMainApp() {
+        landingPage.classList.add('hidden');
+        mainApp.classList.remove('hidden');
+        setTimeout(() => {
+            mainApp.classList.add('visible');
+            isAppActive = true;
+            if (currentPalette.length === 0) createPalette();
+        }, 50);
+    }
 
     // --- Core Functionality ---
 
@@ -29,11 +52,10 @@ document.addEventListener('DOMContentLoaded', () => {
             currentPalette.push(color);
 
             const card = document.createElement('div');
-            card.className = 'color-card';
+            card.className = 'color-card animate-in';
             card.style.backgroundColor = color;
             card.style.animationDelay = `${i * 0.1}s`;
             
-            // Determine text color based on brightness
             const brightness = getBrightness(color);
             const textColor = brightness > 128 ? '#000' : '#fff';
 
@@ -49,6 +71,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function getBrightness(hex) {
         const rgb = hexToRgb(hex);
+        if (!rgb) return 0;
         return (rgb.r * 299 + rgb.g * 587 + rgb.b * 114) / 1000;
     }
 
@@ -75,30 +98,39 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Event Listeners ---
 
     window.onkeydown = (e) => {
-        if (e.code === 'Space') {
+        if (isAppActive && e.code === 'Space') {
             e.preventDefault();
             createPalette();
         }
     };
 
+    btnExamples.onclick = showMainApp;
+
+    btnUploadLanding.onclick = () => landingFileInput.click();
+    landingFileInput.onchange = (e) => {
+        handleImage(e.target.files[0]);
+        showMainApp();
+    };
+
+    landingDropZone.ondragover = (e) => {
+        e.preventDefault();
+        landingDropZone.style.borderColor = "#6366f1";
+    };
+
+    landingDropZone.ondragleave = () => {
+        landingDropZone.style.borderColor = "";
+    };
+
+    landingDropZone.ondrop = (e) => {
+        e.preventDefault();
+        handleImage(e.dataTransfer.files[0]);
+        showMainApp();
+    };
+
     // --- Image Processing ---
 
     dropArea.onclick = () => fileInput.click();
-
     fileInput.onchange = (e) => handleImage(e.target.files[0]);
-
-    dropArea.ondragover = (e) => {
-        e.preventDefault();
-        dropArea.classList.add('dragover');
-    };
-
-    dropArea.ondragleave = () => dropArea.classList.remove('dragover');
-
-    dropArea.ondrop = (e) => {
-        e.preventDefault();
-        dropArea.classList.remove('dragover');
-        handleImage(e.dataTransfer.files[0]);
-    };
 
     function handleImage(file) {
         if (!file || !file.type.startsWith('image/')) return;
@@ -107,7 +139,9 @@ document.addEventListener('DOMContentLoaded', () => {
         reader.onload = (e) => {
             imagePreview.src = e.target.result;
             imagePreview.style.display = 'block';
-            document.getElementById('drop-text').style.display = 'none';
+            
+            const dropText = document.getElementById('drop-text');
+            if (dropText) dropText.style.display = 'none';
 
             const img = new Image();
             img.onload = () => extractColors(img);
@@ -124,7 +158,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
         const colors = [];
         
-        // Sample 8 random points
         for (let i = 0; i < 8; i++) {
             const x = Math.floor(Math.random() * canvas.width);
             const y = Math.floor(Math.random() * canvas.height);
@@ -154,6 +187,10 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Initialize
-    createPalette();
+    // Extraction for initial/provided image
+    if (imagePreview.src && imagePreview.complete) {
+        extractColors(imagePreview);
+    } else if (imagePreview.src) {
+        imagePreview.onload = () => extractColors(imagePreview);
+    }
 });
