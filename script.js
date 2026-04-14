@@ -3,9 +3,9 @@
     const landingPage = document.getElementById('landing-page');
     const mainApp = document.getElementById('main-app');
 
-    // Controls
-    const btnStart = document.getElementById('btn-start');
-    const btnExamples = document.getElementById('btn-examples');
+    // Intro Controls
+    const btnGoExamples = document.getElementById('btn-go-examples');
+    const btnGoUpload = document.getElementById('btn-go-upload');
     const landingFileInput = document.getElementById('landing-file-input');
     const landingDropZone = document.getElementById('landing-drop-zone');
 
@@ -127,11 +127,21 @@
         }
     };
 
-    btnStart.onclick = () => {
+    function hideIntro() {
         preLanding.classList.add('fade-out');
         setTimeout(() => {
             preLanding.style.display = 'none';
         }, 1000);
+    }
+
+    btnGoExamples.onclick = () => {
+        hideIntro();
+        showMainApp();
+    };
+
+    btnGoUpload.onclick = () => {
+        hideIntro();
+        landingPage.classList.remove('hidden');
     };
 
     btnExamples.onclick = showMainApp;
