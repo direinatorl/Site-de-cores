@@ -1,52 +1,81 @@
-    // Screens
-    const preLanding = document.getElementById('pre-landing');
-    const landingPage = document.getElementById('landing-page');
-    const mainApp = document.getElementById('main-app');
+document.addEventListener('DOMContentLoaded', () => {
+    // Stages
+    const stage1 = document.getElementById('stage-1');
+    const stage2 = document.getElementById('stage-2');
+    const stage3 = document.getElementById('stage-3');
 
-    // Intro Controls
+    // Controls Stage 1
     const btnStart = document.getElementById('btn-start');
-    const landingFileInput = document.getElementById('landing-file-input');
-    const landingDropZone = document.getElementById('landing-drop-zone');
 
-    // App Controls
-    const btnHome = document.getElementById('btn-home');
-    const btnCopyAll = document.getElementById('btn-copy-all');
+    // Controls Stage 2
     const btnNewPalette = document.getElementById('btn-new-palette');
-    const btnChangeImage = document.getElementById('btn-change-image');
+    const btnCopyAll = document.getElementById('btn-copy-all');
+    const btnNextToImage = document.getElementById('btn-next-to-image');
 
-    const paletteContainer = document.getElementById('palette-container');
-    const dropArea = document.getElementById('drop-area');
+    // Controls Stage 3
+    const btnBackToGen = document.getElementById('btn-back-to-gen');
+    const btnChangeImage = document.getElementById('btn-change-image');
     const fileInput = document.getElementById('file-input');
     const imagePreview = document.getElementById('image-preview');
     const extractedColorsContainer = document.getElementById('extracted-colors');
+
+    // Shared
+    const paletteContainer = document.getElementById('palette-container');
     const canvas = document.getElementById('color-canvas');
     const ctx = canvas.getContext('2d');
 
     let currentPalette = [];
-    let isAppActive = false;
+    let currentStage = 1;
 
-    // --- Screen Transitions ---
+    // --- Navigation Logic ---
 
-    function showMainApp() {
-        landingPage.classList.add('hidden');
-        mainApp.classList.remove('hidden');
-        setTimeout(() => {
-            mainApp.classList.add('visible');
-            isAppActive = true;
-            if (currentPalette.length === 0) createPalette();
-        }, 50);
+    function goToStage(stageNum) {
+        // Hide all stages
+        [stage1, stage2, stage3].forEach(s => {
+            s.classList.add('hidden');
+            s.classList.remove('active');
+        });
+
+        // Show target stage
+        const target = document.getElementById(`stage-${stageNum}`);
+        target.classList.remove('hidden');
+        setTimeout(() => target.classList.add('active'), 50);
+
+        currentStage = stageNum;
+
+        // Initialize stage specific logic
+        if (stageNum === 2 && currentPalette.length === 0) {
+            createPalette();
+        }
+        if (stageNum === 3) {
+            extractColors(imagePreview);
+        }
     }
 
-    function showLanding() {
-        mainApp.classList.remove('visible');
+    function hideIntro() {
+        stage1.classList.add('fade-out');
         setTimeout(() => {
-            mainApp.classList.add('hidden');
-            landingPage.classList.remove('hidden');
-            isAppActive = false;
-        }, 800);
+            goToStage(2);
+        }, 1000);
     }
 
-    // --- Core Functionality ---
+    // --- Stage 1: Intro / Auto Timer ---
+
+    function startAutoTimer() {
+        stage1.classList.add('active');
+        const autoTimer = setTimeout(() => {
+            if (currentStage === 1) {
+                hideIntro();
+            }
+        }, 10000);
+
+        btnStart.addEventListener('click', () => {
+            clearTimeout(autoTimer);
+            hideIntro();
+        });
+    }
+
+    // --- Stage 2: Palette Generator ---
 
     function generateRandomHex() {
         const chars = '0123456789ABCDEF';
@@ -111,87 +140,13 @@
         });
     }
 
-    function copyAllPalette() {
-        const text = currentPalette.join(', ');
-        copyToClipboard(text);
-        alert('Toda a paleta foi copiada para a área de transferência!');
-    }
-
-    // --- Event Listeners ---
-
-    window.onkeydown = (e) => {
-        if (isAppActive && e.code === 'Space') {
-            e.preventDefault();
-            createPalette();
-        }
-    };
-
-    function hideIntro() {
-        preLanding.classList.add('fade-out');
-        setTimeout(() => {
-            preLanding.style.display = 'none';
-        }, 1000);
-    }
-
-    function startAutoTimer() {
-        preLanding.classList.add('active'); // Starts CSS animation
-        const autoTimer = setTimeout(() => {
-            if (preLanding.style.display !== 'none') {
-                hideIntro();
-                landingPage.classList.remove('hidden');
-            }
-        }, 10000);
-
-        // Cancel timer if user clicks manually
-        btnStart.addEventListener('click', () => {
-            clearTimeout(autoTimer);
-            hideIntro();
-            landingPage.classList.remove('hidden');
-        });
-    }
-
-    // Initialize Auto Timer
-    startAutoTimer();
-
-    btnExamples.onclick = showMainApp;
-    btnHome.onclick = showLanding;
-    btnCopyAll.onclick = copyAllPalette;
-    btnNewPalette.onclick = createPalette;
-
-    // Landing Upload
-    landingDropZone.onclick = () => landingFileInput.click();
-    landingFileInput.onchange = (e) => {
-        handleImage(e.target.files[0]);
-        showMainApp();
-    };
-
-    landingDropZone.ondragover = (e) => {
-        e.preventDefault();
-        landingDropZone.style.borderColor = "#6366f1";
-    };
-
-    landingDropZone.ondragleave = () => {
-        landingDropZone.style.borderColor = "";
-    };
-
-    landingDropZone.ondrop = (e) => {
-        e.preventDefault();
-        handleImage(e.dataTransfer.files[0]);
-        showMainApp();
-    };
-
-    // App Image Change
-    btnChangeImage.onclick = () => fileInput.click();
-    fileInput.onchange = (e) => handleImage(e.target.files[0]);
+    // --- Stage 3: Image Logic ---
 
     function handleImage(file) {
         if (!file || !file.type.startsWith('image/')) return;
-
         const reader = new FileReader();
         reader.onload = (e) => {
             imagePreview.src = e.target.result;
-            imagePreview.style.display = 'block';
-            
             const img = new Image();
             img.onload = () => extractColors(img);
             img.src = e.target.result;
@@ -200,24 +155,18 @@
     }
 
     function extractColors(img) {
+        if (!img.complete) return;
         canvas.width = img.width;
         canvas.height = img.height;
         ctx.drawImage(img, 0, 0);
-
         const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
         const colors = [];
-        
         for (let i = 0; i < 8; i++) {
             const x = Math.floor(Math.random() * canvas.width);
             const y = Math.floor(Math.random() * canvas.height);
             const offset = (y * canvas.width + x) * 4;
-            
-            const r = imageData[offset];
-            const g = imageData[offset + 1];
-            const b = imageData[offset + 2];
-            colors.push(rgbToHex(r, g, b));
+            colors.push(rgbToHex(imageData[offset], imageData[offset+1], imageData[offset+2]));
         }
-
         renderExtractedColors(colors);
     }
 
@@ -227,7 +176,6 @@
             const div = document.createElement('div');
             div.className = 'extracted-color';
             div.style.backgroundColor = color;
-            div.title = `Clique para copiar: ${color}`;
             div.onclick = () => {
                 copyToClipboard(color);
                 alert(`Cor ${color} copiada!`);
@@ -236,10 +184,26 @@
         });
     }
 
-    // Initial extraction
-    if (imagePreview.complete) {
-        extractColors(imagePreview);
-    } else {
-        imagePreview.onload = () => extractColors(imagePreview);
+    // --- Event Listeners ---
+
+    window.onkeydown = (e) => {
+        if (currentStage === 2 && e.code === 'Space') {
+            e.preventDefault();
+            createPalette();
+        }
+    };
+
+    btnNewPalette.onclick = createPalette;
+    btnCopyAll.onclick = () => {
+        copyToClipboard(currentPalette.join(', '));
+        alert('Paleta copiada!');
     }
+
+    btnNextToImage.onclick = () => goToStage(3);
+    btnBackToGen.onclick = () => goToStage(2);
+    btnChangeImage.onclick = () => fileInput.click();
+    fileInput.onchange = (e) => handleImage(e.target.files[0]);
+
+    // Init
+    startAutoTimer();
 });
