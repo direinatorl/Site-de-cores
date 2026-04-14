@@ -10,25 +10,38 @@
 <body>
     <!-- Landing Screen -->
     <section id="landing-page" class="animate-in">
-        <div class="logo">Spectra.</div>
-        <h1>Colora sua imaginação.</h1>
-        <p>Identifique cores de suas fotos favoritas ou descubra combinações aleatórias impressionantes pressionando uma tecla.</p>
-        
-        <div class="landing-controls">
-            <div class="landing-drop-zone" id="landing-drop-zone">
-                <p>Arraste uma imagem aqui para começar</p>
+        <div class="landing-content">
+            <div class="logo">Spectra.</div>
+            <h1>A essência das cores.</h1>
+            
+            <div class="main-upload-container" id="landing-drop-zone">
+                <div class="upload-icon">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                </div>
+                <p>Clique ou arraste uma imagem aqui</p>
                 <input type="file" id="landing-file-input" hidden accept="image/*">
             </div>
-            <button class="btn-primary" id="btn-upload-landing">Upload de Imagem</button>
-            <button class="btn-secondary" id="btn-examples">Exemplo de cores e seus códigos</button>
+
+            <div class="landing-footer">
+                <button class="btn-ghost" id="btn-examples">Exemplo de cores e seus códigos</button>
+            </div>
         </div>
     </section>
 
     <!-- Main Application -->
     <div id="main-app" class="container hidden">
         <header>
-            <div class="logo">Spectra.</div>
-            <div class="hint">Pressione <kbd>Espaço</kbd> para gerar novas cores</div>
+            <div class="logo-group">
+                <button class="btn-icon" id="btn-home" title="Voltar para o início">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                </button>
+                <div class="logo">Spectra.</div>
+            </div>
+            
+            <div class="actions-group">
+                <button class="btn-secondary" id="btn-copy-all">Copiar Tudo</button>
+                <button class="btn-primary" id="btn-new-palette">Nova Paleta</button>
+            </div>
         </header>
 
         <main>
@@ -39,13 +52,15 @@
 
             <!-- Image Discovery Section -->
             <section class="image-section">
-                <h2>Inspiração Visual</h2>
-                <p>Extraia a essência cromática desta ou de outra imagem</p>
+                <div class="section-header">
+                    <h2>Identificar Cores</h2>
+                    <p>Extraia a paleta de qualquer imagem</p>
+                </div>
                 
                 <div class="drop-area" id="drop-area">
-                    <p id="drop-text">Clique para trocar a imagem</p>
                     <input type="file" id="file-input" hidden accept="image/*">
                     <img id="image-preview" alt="Preview da imagem" src="inspiration.png" style="display: block;">
+                    <button class="btn-overlay" id="btn-change-image">Trocar Imagem</button>
                 </div>
 
                 <div class="extracted-colors" id="extracted-colors">
@@ -55,7 +70,7 @@
         </main>
 
         <footer>
-            <p>&copy; 2026 Spectra. Feito para o GitHub com &hearts;</p>
+            <p>&copy; 2026 Spectra. Criado para colecionadores de cores.</p>
         </footer>
     </div>
 

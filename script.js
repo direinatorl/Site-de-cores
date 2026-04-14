@@ -5,9 +5,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Controls
     const btnExamples = document.getElementById('btn-examples');
-    const btnUploadLanding = document.getElementById('btn-upload-landing');
     const landingFileInput = document.getElementById('landing-file-input');
     const landingDropZone = document.getElementById('landing-drop-zone');
+
+    // App Controls
+    const btnHome = document.getElementById('btn-home');
+    const btnCopyAll = document.getElementById('btn-copy-all');
+    const btnNewPalette = document.getElementById('btn-new-palette');
+    const btnChangeImage = document.getElementById('btn-change-image');
 
     const paletteContainer = document.getElementById('palette-container');
     const dropArea = document.getElementById('drop-area');
@@ -30,6 +35,15 @@ document.addEventListener('DOMContentLoaded', () => {
             isAppActive = true;
             if (currentPalette.length === 0) createPalette();
         }, 50);
+    }
+
+    function showLanding() {
+        mainApp.classList.remove('visible');
+        setTimeout(() => {
+            mainApp.classList.add('hidden');
+            landingPage.classList.remove('hidden');
+            isAppActive = false;
+        }, 800);
     }
 
     // --- Core Functionality ---
@@ -90,9 +104,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function copyToClipboard(text, element) {
         navigator.clipboard.writeText(text).then(() => {
-            element.classList.add('copied');
-            setTimeout(() => element.classList.remove('copied'), 1500);
+            if (element) {
+                element.classList.add('copied');
+                setTimeout(() => element.classList.remove('copied'), 1500);
+            }
         });
+    }
+
+    function copyAllPalette() {
+        const text = currentPalette.join(', ');
+        copyToClipboard(text);
+        alert('Toda a paleta foi copiada para a área de transferência!');
     }
 
     // --- Event Listeners ---
@@ -105,8 +127,12 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     btnExamples.onclick = showMainApp;
+    btnHome.onclick = showLanding;
+    btnCopyAll.onclick = copyAllPalette;
+    btnNewPalette.onclick = createPalette;
 
-    btnUploadLanding.onclick = () => landingFileInput.click();
+    // Landing Upload
+    landingDropZone.onclick = () => landingFileInput.click();
     landingFileInput.onchange = (e) => {
         handleImage(e.target.files[0]);
         showMainApp();
@@ -127,9 +153,8 @@ document.addEventListener('DOMContentLoaded', () => {
         showMainApp();
     };
 
-    // --- Image Processing ---
-
-    dropArea.onclick = () => fileInput.click();
+    // App Image Change
+    btnChangeImage.onclick = () => fileInput.click();
     fileInput.onchange = (e) => handleImage(e.target.files[0]);
 
     function handleImage(file) {
@@ -140,9 +165,6 @@ document.addEventListener('DOMContentLoaded', () => {
             imagePreview.src = e.target.result;
             imagePreview.style.display = 'block';
             
-            const dropText = document.getElementById('drop-text');
-            if (dropText) dropText.style.display = 'none';
-
             const img = new Image();
             img.onload = () => extractColors(img);
             img.src = e.target.result;
@@ -180,17 +202,17 @@ document.addEventListener('DOMContentLoaded', () => {
             div.style.backgroundColor = color;
             div.title = `Clique para copiar: ${color}`;
             div.onclick = () => {
-                navigator.clipboard.writeText(color);
+                copyToClipboard(color);
                 alert(`Cor ${color} copiada!`);
             };
             extractedColorsContainer.appendChild(div);
         });
     }
 
-    // Extraction for initial/provided image
-    if (imagePreview.src && imagePreview.complete) {
+    // Initial extraction
+    if (imagePreview.complete) {
         extractColors(imagePreview);
-    } else if (imagePreview.src) {
+    } else {
         imagePreview.onload = () => extractColors(imagePreview);
     }
 });
